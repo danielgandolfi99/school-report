@@ -2,22 +2,13 @@
 
 import React from 'react';
 
-// next
-import Image from 'next/legacy/image';
-import NextLink from 'next/link';
-import { signIn } from 'next-auth/react';
-
 // material-ui
-import { Theme } from '@mui/material/styles';
 import {
   Box,
-  useMediaQuery,
   Button,
-  Divider,
   FormHelperText,
   FormControl,
   Grid,
-  Link,
   InputAdornment,
   InputLabel,
   OutlinedInput,
@@ -30,11 +21,9 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
-import { APP_DEFAULT_PATH } from 'config';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
 
 // assets
@@ -43,15 +32,7 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 // types
 import { StringColorProps } from 'types/password';
 
-const Auth0 = '/assets/images/icons/auth0.svg';
-const Cognito = '/assets/images/icons/aws-cognito.svg';
-const Google = '/assets/images/icons/google.svg';
-
-// ============================|| AWS CONNITO - LOGIN ||============================ //
-
 const AuthRegister = ({ providers, csrfToken }: any) => {
-  const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-
   const [level, setLevel] = React.useState<StringColorProps>();
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
@@ -75,29 +56,44 @@ const AuthRegister = ({ providers, csrfToken }: any) => {
     <>
       <Formik
         initialValues={{
+          username: '',
           name: '',
           email: '',
           password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          name: Yup.string().max(255).required('Name is required'),
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          username: Yup.string().max(255).required('Nome de usuário é obrigatório'),
+          name: Yup.string().max(255).required('Nome é obrigatório'),
+          email: Yup.string().email('O email precisa ser válido').max(255).required('Email é obrigatório'),
+          password: Yup.string().max(255).required('Senha é obrigatória')
         })}
         onSubmit={(values, { setErrors, setSubmitting }) => {
-          signIn('register', {
-            redirect: false,
-            name: values.name,
-            email: values.email,
-            password: values.password,
-            callbackUrl: APP_DEFAULT_PATH
-          }).then((res: any) => {
-            if (res?.error) {
-              setErrors({ submit: res.error });
+          fetch('/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: values.username,
+              name: values.name,
+              email: values.email,
+              password: values.password
+            })
+          })
+            .then(async (res) => {
+              const data = await res.json();
+              if (!res.ok) {
+                setErrors({ submit: data.message || 'Ocorreu um erro ao criar a conta' });
+              } else {
+                window.location.href = '/login';
+              }
               setSubmitting(false);
-            }
-          });
+            })
+            .catch((error) => {
+              setErrors({ submit: 'Erro ao criar conta' });
+              setSubmitting(false);
+            });
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -106,53 +102,77 @@ const AuthRegister = ({ providers, csrfToken }: any) => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="name-login">Name</InputLabel>
+                  <InputLabel htmlFor="username-register">Nome de Usuário</InputLabel>
                   <OutlinedInput
-                    id="name-login"
+                    id="username-register"
+                    type="text"
+                    value={values.username}
+                    name="username"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Digite seu nome de usuário"
+                    fullWidth
+                    error={Boolean(touched.username && errors.username)}
+                  />
+                </Stack>
+                {touched.username && errors.username && (
+                  <FormHelperText error id="standard-weight-helper-text-username-register">
+                    {errors.username}
+                  </FormHelperText>
+                )}
+              </Grid>
+
+              <Grid item xs={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name-register">Nome</InputLabel>
+                  <OutlinedInput
+                    id="name-register"
                     type="text"
                     value={values.name}
                     name="name"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter your name"
+                    placeholder="Digite seu nome"
                     fullWidth
                     error={Boolean(touched.name && errors.name)}
                   />
                 </Stack>
                 {touched.name && errors.name && (
-                  <FormHelperText error id="standard-weight-helper-text-name-login">
+                  <FormHelperText error id="standard-weight-helper-text-name-register">
                     {errors.name}
                   </FormHelperText>
                 )}
               </Grid>
+
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-register">Endereço de Email</InputLabel>
                   <OutlinedInput
-                    id="email-login"
+                    id="email-register"
                     type="email"
                     value={values.email}
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder="Digite seu email"
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
                   />
                 </Stack>
                 {touched.email && errors.email && (
-                  <FormHelperText error id="standard-weight-helper-text-email-login">
+                  <FormHelperText error id="standard-weight-helper-text-email-register">
                     {errors.email}
                   </FormHelperText>
                 )}
               </Grid>
+
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
+                  <InputLabel htmlFor="password-register">Senha</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}
-                    id="-password-login"
+                    id="password-register"
                     type={showPassword ? 'text' : 'password'}
                     value={values.password}
                     name="password"
@@ -164,7 +184,7 @@ const AuthRegister = ({ providers, csrfToken }: any) => {
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
-                          aria-label="toggle password visibility"
+                          aria-label="mostrar/ocultar senha"
                           onClick={handleClickShowPassword}
                           onMouseDown={handleMouseDownPassword}
                           edge="end"
@@ -174,11 +194,11 @@ const AuthRegister = ({ providers, csrfToken }: any) => {
                         </IconButton>
                       </InputAdornment>
                     }
-                    placeholder="Enter password"
+                    placeholder="Digite sua senha"
                   />
                 </Stack>
                 {touched.password && errors.password && (
-                  <FormHelperText error id="standard-weight-helper-text-password-login">
+                  <FormHelperText error id="standard-weight-helper-text-password-register">
                     {errors.password}
                   </FormHelperText>
                 )}
@@ -195,19 +215,6 @@ const AuthRegister = ({ providers, csrfToken }: any) => {
                   </Grid>
                 </FormControl>
               </Grid>
-
-              <Grid item xs={12} sx={{ mt: -1 }}>
-                <Typography variant="body2">
-                  By Signing up, you agree to our &nbsp;
-                  <NextLink href="/" passHref legacyBehavior>
-                    <Link variant="subtitle2">Terms of Service</Link>
-                  </NextLink>
-                  &nbsp; and &nbsp;
-                  <NextLink href="/" passHref legacyBehavior>
-                    <Link variant="subtitle2">Privacy Policy</Link>
-                  </NextLink>
-                </Typography>
-              </Grid>
               {errors.submit && (
                 <Grid item xs={12}>
                   <FormHelperText error>{errors.submit}</FormHelperText>
@@ -216,7 +223,7 @@ const AuthRegister = ({ providers, csrfToken }: any) => {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Create Account
+                    Criar Conta
                   </Button>
                 </AnimateButton>
               </Grid>
@@ -224,65 +231,6 @@ const AuthRegister = ({ providers, csrfToken }: any) => {
           </form>
         )}
       </Formik>
-      <Divider sx={{ mt: 2 }}>
-        <Typography variant="caption"> Sign up with</Typography>
-      </Divider>
-      {providers && (
-        <Stack
-          direction="row"
-          spacing={matchDownSM ? 1 : 2}
-          justifyContent={matchDownSM ? 'space-around' : 'space-between'}
-          sx={{ mt: 3, '& .MuiButton-startIcon': { mr: matchDownSM ? 0 : 1, ml: matchDownSM ? 0 : -0.5 } }}
-        >
-          {Object.values(providers).map((provider: any) => {
-            if (provider.id === 'login' || provider.id === 'register') {
-              return;
-            }
-            return (
-              <Box key={provider.name} sx={{ width: '100%' }}>
-                {provider.id === 'google' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Google} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Google'}
-                  </Button>
-                )}
-                {provider.id === 'auth0' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Auth0} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Auth0'}
-                  </Button>
-                )}
-                {provider.id === 'cognito' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Cognito} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Cognito'}
-                  </Button>
-                )}
-              </Box>
-            );
-          })}
-        </Stack>
-      )}
-      {!providers && (
-        <Box sx={{ mt: 3 }}>
-          <FirebaseSocial />
-        </Box>
-      )}
     </>
   );
 };

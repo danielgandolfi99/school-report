@@ -3,22 +3,15 @@
 import React, { useState, FocusEvent, SyntheticEvent } from 'react';
 
 // next
-import Image from 'next/legacy/image';
-import NextLink from 'next/link';
 import { signIn } from 'next-auth/react';
 
 // material-ui
-import { Theme } from '@mui/material/styles';
 import {
-  Box,
-  useMediaQuery,
   Button,
   Checkbox,
-  Divider,
   FormControlLabel,
   FormHelperText,
   Grid,
-  Link,
   InputAdornment,
   InputLabel,
   OutlinedInput,
@@ -28,28 +21,20 @@ import {
 
 // third party
 import * as Yup from 'yup';
-import { preload } from 'swr';
 import { Formik } from 'formik';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 import { APP_DEFAULT_PATH } from 'config';
-import { fetcher } from 'utils/axios';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
-const Auth0 = '/assets/images/icons/auth0.svg';
-const Cognito = '/assets/images/icons/aws-cognito.svg';
-const Google = '/assets/images/icons/google.svg';
-
 // ============================|| AWS CONNITO - LOGIN ||============================ //
 
 const AuthLogin = ({ providers, csrfToken }: any) => {
-  const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [checked, setChecked] = useState(false);
   const [capsWarning, setCapsWarning] = useState(false);
 
@@ -74,35 +59,39 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
     <>
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
+          user: '',
+          password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          user: Yup.string()
+            .required('Nome de usuário obrigatório')
+            .min(5, 'usuário inválido')
+            .matches(/(?!^\.)(?!.*[.]$)^[a-z]*\.?[a-z]*?$(?!$\.)/, 'usuário inválido'),
+          password: Yup.string().required('A senha é obrigatória!')
         })}
-        onSubmit={(values, { setErrors, setSubmitting }) => {
-          signIn('login', {
-            redirect: true,
-            email: values.email,
-            password: values.password,
-            callbackUrl: APP_DEFAULT_PATH
-          }).then(
-            (res: any) => {
-              if (res?.error) {
-                setErrors({ submit: res.error });
-                setSubmitting(false);
-              } else {
-                preload('api/menu/dashboard', fetcher); // load menu on login success
-                setSubmitting(false);
-              }
-            },
-            (res) => {
+        onSubmit={async (values, { setErrors, setSubmitting }) => {
+          try {
+            const res = await signIn('credentials', {
+              redirect: false,
+              username: values.user,
+              password: values.password,
+              callbackUrl: APP_DEFAULT_PATH
+            });
+
+            if (res?.error) {
               setErrors({ submit: res.error });
-              setSubmitting(false);
+            } else if (res?.ok) {
+              window.location.href = APP_DEFAULT_PATH;
+            } else {
+              setErrors({ submit: 'Erro desconhecido durante o login.' });
             }
-          );
+          } catch (error) {
+            console.error('Erro ao fazer login:', error);
+            setErrors({ submit: 'Erro ao fazer login.' });
+          } finally {
+            setSubmitting(false);
+          }
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -111,28 +100,28 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="user-login">Usuário</InputLabel>
                   <OutlinedInput
-                    id="email-login"
-                    type="email"
-                    value={values.email}
-                    name="email"
+                    id="user-login"
+                    type="user"
+                    value={values.user}
+                    name="user"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder="Digite seu usuário"
                     fullWidth
-                    error={Boolean(touched.email && errors.email)}
+                    error={Boolean(touched.user && errors.user)}
                   />
                 </Stack>
-                {touched.email && errors.email && (
-                  <FormHelperText error id="standard-weight-helper-text-email-login">
-                    {errors.email}
+                {touched.user && errors.user && (
+                  <FormHelperText error id="standard-weight-helper-text-user-login">
+                    {errors.user}
                   </FormHelperText>
                 )}
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
+                  <InputLabel htmlFor="password-login">Senha</InputLabel>
                   <OutlinedInput
                     fullWidth
                     color={capsWarning ? 'warning' : 'primary'}
@@ -160,11 +149,11 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
                         </IconButton>
                       </InputAdornment>
                     }
-                    placeholder="Enter password"
+                    placeholder="Digite sua senha"
                   />
                   {capsWarning && (
                     <Typography variant="caption" sx={{ color: 'warning.main' }} id="warning-helper-text-password-login">
-                      Caps lock on!
+                      Caps lock ativo!
                     </Typography>
                   )}
                 </Stack>
@@ -187,13 +176,8 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
                         size="small"
                       />
                     }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
+                    label={<Typography variant="h6">Salvar login</Typography>}
                   />
-                  <NextLink href={'/forget-pass'} passHref legacyBehavior>
-                    <Link variant="h6" color="text.primary">
-                      Forgot Password?
-                    </Link>
-                  </NextLink>
                 </Stack>
               </Grid>
               {errors.submit && (
@@ -204,7 +188,7 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
+                    Entrar
                   </Button>
                 </AnimateButton>
               </Grid>
@@ -212,65 +196,6 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
           </form>
         )}
       </Formik>
-      <Divider sx={{ mt: 2 }}>
-        <Typography variant="caption"> Login with</Typography>
-      </Divider>
-      {providers && (
-        <Stack
-          direction="row"
-          spacing={matchDownSM ? 1 : 2}
-          justifyContent={matchDownSM ? 'space-around' : 'space-between'}
-          sx={{ mt: 3, '& .MuiButton-startIcon': { mr: matchDownSM ? 0 : 1, ml: matchDownSM ? 0 : -0.5 } }}
-        >
-          {Object.values(providers).map((provider: any) => {
-            if (provider.id === 'login' || provider.id === 'register') {
-              return;
-            }
-            return (
-              <Box key={provider.name} sx={{ width: '100%' }}>
-                {provider.id === 'google' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Google} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Google'}
-                  </Button>
-                )}
-                {provider.id === 'auth0' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Auth0} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Auth0'}
-                  </Button>
-                )}
-                {provider.id === 'cognito' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Cognito} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Cognito'}
-                  </Button>
-                )}
-              </Box>
-            );
-          })}
-        </Stack>
-      )}
-      {!providers && (
-        <Box sx={{ mt: 3 }}>
-          <FirebaseSocial />
-        </Box>
-      )}
     </>
   );
 };
