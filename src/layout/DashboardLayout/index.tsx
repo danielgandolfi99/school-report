@@ -3,13 +3,11 @@
 import { useEffect, ReactNode } from 'react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
-import { Box, Container, Toolbar, useMediaQuery } from '@mui/material';
+import { Box, Toolbar, useMediaQuery } from '@mui/material';
 
 // project import
 import Drawer from './Drawer';
 import Header from './Header';
-import Footer from './Footer';
 import HorizontalBar from './Drawer/HorizontalBar';
 import Loader from 'components/Loader';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
@@ -19,6 +17,7 @@ import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 
 // types
 import { MenuOrientation } from 'types/config';
+import { useTheme } from '@mui/system';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -32,7 +31,7 @@ const DashboardLayout = ({ children }: Props) => {
   const matchDownXL = useMediaQuery(theme.breakpoints.down('xl'));
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const { container, miniDrawer, menuOrientation } = useConfig();
+  const { miniDrawer, menuOrientation } = useConfig();
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 
@@ -50,22 +49,10 @@ const DashboardLayout = ({ children }: Props) => {
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header />
       {!isHorizontal ? <Drawer /> : <HorizontalBar />}
-      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
+      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 1, sm: 1 } }}>
         <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
-        <Container
-          maxWidth={container ? 'xl' : false}
-          sx={{
-            ...(container && { px: { xs: 0, sm: 2 } }),
-            position: 'relative',
-            minHeight: 'calc(100vh - 110px)',
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          <Breadcrumbs />
-          {children}
-          <Footer />
-        </Container>
+        <Breadcrumbs />
+        {children}
       </Box>
     </Box>
   );

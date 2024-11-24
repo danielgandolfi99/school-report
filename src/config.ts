@@ -15,7 +15,7 @@ export const HORIZONTAL_MAX_ITEM = 7;
 export const DRAWER_WIDTH = 260;
 export const MINI_DRAWER_WIDTH = 60;
 
-const publicSans = Public_Sans({ subsets: ['latin'], weight: ['400', '500', '300', '700'] });
+const publicSans = Public_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
 // ==============================|| THEME CONFIG ||============================== //
 
@@ -26,7 +26,7 @@ const config: DefaultConfigProps = {
   miniDrawer: false,
   container: true,
   mode: ThemeMode.LIGHT,
-  presetColor: 'default',
+  presetColor: 'theme6',
   themeDirection: ThemeDirection.LTR
 };
 

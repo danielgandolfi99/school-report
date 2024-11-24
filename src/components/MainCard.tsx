@@ -12,7 +12,7 @@ import { ThemeMode } from 'types/config';
 
 // header style
 const headerSX = {
-  p: 2.5,
+  p: 1,
   '& .MuiCardHeader-action': { m: '0px auto', alignSelf: 'center' }
 };
 

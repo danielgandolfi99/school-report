@@ -4,10 +4,7 @@ import { Box, useMediaQuery } from '@mui/material';
 
 // project import
 import Search from './Search';
-import Message from './Message';
 import Profile from './Profile';
-import FullScreen from './FullScreen';
-import Notification from './Notification';
 import MobileSection from './MobileSection';
 
 import useConfig from 'hooks/useConfig';
@@ -31,9 +28,6 @@ const HeaderContent = () => {
       {!downLG && <Search />}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
 
-      <Notification />
-      <Message />
-      {!downLG && <FullScreen />}
       {!downLG && <Profile />}
       {downLG && <MobileSection />}
     </>
