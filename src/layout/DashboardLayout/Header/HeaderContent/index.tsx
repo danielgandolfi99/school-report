@@ -3,7 +3,6 @@ import { Theme } from '@mui/material/styles';
 import { Box, useMediaQuery } from '@mui/material';
 
 // project import
-import Search from './Search';
 import Profile from './Profile';
 import MobileSection from './MobileSection';
 
@@ -25,7 +24,7 @@ const HeaderContent = () => {
   return (
     <>
       {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />}
-      {!downLG && <Search />}
+      {!downLG && <Box sx={{ width: '100%', ml: { xs: 0, md: 1 } }} />}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
 
       {!downLG && <Profile />}
