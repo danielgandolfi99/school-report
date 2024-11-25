@@ -10,28 +10,28 @@ import Loader from 'components/Loader';
 
 // types
 import { GuardProps } from 'types/auth';
+import useUser from 'hooks/useUser';
 
 // ==============================|| AUTH GUARD ||============================== //
 
 const AuthGuard = ({ children }: GuardProps) => {
   const router = useRouter();
+  const user = useUser();
+  const token = user?.token;
 
   useEffect(() => {
-    const session = localStorage.getItem('session');
 
-    if (!session) {
+    if (!token) {
       router.push('/login');
       return;
     }
 
-    const parsedSession = JSON.parse(session);
-
-    if (!parsedSession?.token) {
+    if (!token) {
       router.push('/login');
     }
   }, [router]);
 
-  return <>{!localStorage.getItem('session') ? <Loader /> : children}</>;
+  return <>{!token ? <Loader /> : children}</>;
 };
 
 export default AuthGuard;

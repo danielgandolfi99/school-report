@@ -19,7 +19,7 @@ export default function SignIn({ providers, csrfToken }: any) {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <AuthLogin providers={providers} csrfToken={csrfToken} />
+          <AuthLogin />
         </Grid>
       </Grid>
     </AuthWrapper>
