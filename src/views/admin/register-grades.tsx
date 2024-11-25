@@ -20,35 +20,56 @@ import {
 } from '@mui/material';
 import { darken, lighten, useTheme } from '@mui/system';
 import MainCard from 'components/MainCard';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { GradesProps } from 'types/grades';
-
-const data: GradesProps[] = [
-  {
-    id_nota: 1,
-    nome_aluno: 'Daniel',
-    id_usuario: 1,
-    id_disciplina: 1,
-    nome_disciplina: 'Engenharia de Software II',
-    nota: 10
-  },
-  { id_nota: 2, nome_aluno: 'Carlos', id_usuario: 2, id_disciplina: 2, nome_disciplina: 'Engenharia de Software II', nota: 8 }
-];
+import useUser from 'hooks/useUser';
+import axiosServices from 'utils/axios';
+import ModalEditGrade from 'components/Modals/RegisterGrades/ModalEditGrade';
 
 const RegisterGrades = () => {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
 
   const [modalAdd, setModalAdd] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState(true);
 
+  const [data, setData] = useState<GradesProps[]>([]);
   const [dataGrade, setDataGrade] = useState<GradesProps>({} as GradesProps);
+
+  useEffect(() => {
+    if (search && user) {
+      handleSearch();
+    }
+  }, [search, user]);
+
+  const handleSearch = async () => {
+    try {
+      await axiosServices
+        .get('/nota/consultar', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((res) => {
+          if (res && res.data) {
+            setData(res.data);
+          }
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
 
   const handleDeleteGrade = () => {
     console.log('teste');
@@ -290,7 +311,7 @@ const RegisterGrades = () => {
               }
               content={false}
             >
-              {/* <ModalEditGrade onClose={handleCloseModalEdit} onSearch={setSearch} dataGrade={dataGrade} /> */}
+              <ModalEditGrade onClose={handleCloseModalEdit} onSearch={setSearch} dataGrade={dataGrade} />
             </MainCard>
           </Grid>
         </Grid>

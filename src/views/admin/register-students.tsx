@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { darken, lighten, useTheme } from '@mui/system';
 import MainCard from 'components/MainCard';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { UserProps } from 'types/user';
@@ -29,49 +29,48 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import ModalCreateStudent from 'components/Modals/RegisterStudents/ModalCreateStudent';
 import ModalEditStudent from 'components/Modals/RegisterStudents/ModalEditStudent';
-
-const data: UserProps[] = [
-  {
-    id_usuario: 1,
-    nome: 'João Silva',
-    email: 'joao.silva@example.com',
-    tipo_usuario: 'admin'
-  },
-  {
-    id_usuario: 2,
-    nome: 'Maria Oliveira',
-    email: 'maria.oliveira@example.com',
-    tipo_usuario: 'user'
-  },
-  {
-    id_usuario: 3,
-    nome: 'Carlos Souza',
-    email: 'carlos.souza@example.com',
-    tipo_usuario: 'moderator'
-  },
-  {
-    id_usuario: 4,
-    nome: 'Ana Santos',
-    email: 'ana.santos@example.com',
-    tipo_usuario: 'user'
-  },
-  {
-    id_usuario: 5,
-    nome: 'Roberto Lima',
-    email: 'roberto.lima@example.com',
-    tipo_usuario: 'admin'
-  }
-];
+import useUser from 'hooks/useUser';
+import axiosServices from 'utils/axios';
 
 const RegisterStudents = () => {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
 
   const [modalAdd, setModalAdd] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState(true);
 
+  const [data, setData] = useState<UserProps[]>([]);
   const [dataStudent, setDataStudent] = useState<UserProps>({} as UserProps);
+
+  useEffect(() => {
+    if (search && user) {
+      handleSearch();
+    }
+  }, [search, user]);
+
+  const handleSearch = async () => {
+    try {
+      await axiosServices
+        .get('/usuario/alunos', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((res) => {
+          if (res && res.data) {
+            setData(res.data);
+          }
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
 
   const handleDeleteStudent = () => {
     console.log('teste');

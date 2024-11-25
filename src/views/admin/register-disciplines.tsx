@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { darken, lighten, useTheme } from '@mui/system';
 import MainCard from 'components/MainCard';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import EditIcon from '@mui/icons-material/Edit';
@@ -29,39 +29,48 @@ import CloseIcon from '@mui/icons-material/Close';
 import { DisciplinesProps } from 'types/disciplines';
 import ModalCreateDiscipline from 'components/Modals/RegisterDisciplines/ModalCreateDiscipline';
 import ModalEditDiscipline from 'components/Modals/RegisterDisciplines/ModalEditDiscipline';
-
-const data: DisciplinesProps[] = [
-  {
-    id_disciplina: 1,
-    nome_disciplina: 'Engenharia de Software II'
-  },
-  {
-    id_disciplina: 2,
-    nome_disciplina: 'Engenharia de Software II'
-  },
-  {
-    id_disciplina: 3,
-    nome_disciplina: 'Engenharia de Software II'
-  },
-  {
-    id_disciplina: 4,
-    nome_disciplina: 'Engenharia de Software II'
-  },
-  {
-    id_disciplina: 5,
-    nome_disciplina: 'Engenharia de Software II'
-  }
-];
+import useUser from 'hooks/useUser';
+import axiosServices from 'utils/axios';
 
 const RegisterDisciplines = () => {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
 
   const [modalAdd, setModalAdd] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState(true);
 
+  const [data, setData] = useState<DisciplinesProps[]>([]);
   const [dataDiscipline, setDataDiscipline] = useState<DisciplinesProps>({} as DisciplinesProps);
+
+  useEffect(() => {
+    if (search && user) {
+      handleSearch();
+    }
+  }, [search, user]);
+
+  const handleSearch = async () => {
+    try {
+      await axiosServices
+        .get('/disciplina/consultar', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((res) => {
+          if (res && res.data) {
+            setData(res.data);
+          }
+        })
+        .finally(() => {
+          setSearch(false);
+        });
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
 
   const handleDeleteDiscipline = () => {
     console.log('teste');
