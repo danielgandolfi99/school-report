@@ -14,7 +14,7 @@ import RTLLayout from 'components/RTLLayout';
 import Notistack from 'components/third-party/Notistack';
 
 import { ConfigProvider } from 'contexts/ConfigContext';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider } from 'components/@extended/SnackbarContext';
 // import SessionCheck from 'components/third-party/SessionCheck';
 
 // ==============================|| APP - THEME, ROUTER, LOCAL ||============================== //
