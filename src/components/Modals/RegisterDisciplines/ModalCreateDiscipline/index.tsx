@@ -1,5 +1,8 @@
 import { Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
+import useUser from 'hooks/useUser';
 import { useState } from 'react';
+import axiosServices from 'utils/axios';
 
 interface ModalProps {
   onClose: () => void;
@@ -8,12 +11,31 @@ interface ModalProps {
 
 export default function ModalCreateDiscipline({ onClose, onSearch }: ModalProps) {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
   const [name, setName] = useState('');
 
-  const handleSubmit = () => {
-    onClose();
-    onSearch(true);
+  const handleSubmit = async () => {
+    const newRegister = {
+      nome: name
+    };
+    try {
+      await axiosServices
+        .post('/disciplina/cadastrar', newRegister, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Disciplina cadastrada com sucesso', true);
+          onClose();
+          onSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao cadastrar disciplina', false);
+    }
   };
 
   const handleReset = () => {

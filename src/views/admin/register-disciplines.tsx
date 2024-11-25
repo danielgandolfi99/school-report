@@ -31,11 +31,13 @@ import ModalCreateDiscipline from 'components/Modals/RegisterDisciplines/ModalCr
 import ModalEditDiscipline from 'components/Modals/RegisterDisciplines/ModalEditDiscipline';
 import useUser from 'hooks/useUser';
 import axiosServices from 'utils/axios';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
 
 const RegisterDisciplines = () => {
   const theme = useTheme();
   const user = useUser();
   const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
   const [modalAdd, setModalAdd] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
@@ -68,12 +70,25 @@ const RegisterDisciplines = () => {
           setSearch(false);
         });
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      showSnackbar('Erro ao buscar disciplinas', false);
     }
   };
 
-  const handleDeleteDiscipline = () => {
-    console.log('teste');
+  const handleDeleteDiscipline = async () => {
+    try {
+      await axiosServices
+        .delete(`/discipline/deletar/${dataDiscipline.id_disciplina}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Disciplina deletada com sucesso', true);
+          setSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao deletar disciplina', false);
+    }
   };
 
   const handleCloseModalAdd = () => {

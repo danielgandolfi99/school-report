@@ -1,6 +1,9 @@
 import { Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
+import useUser from 'hooks/useUser';
 import { useState } from 'react';
 import { DisciplinesProps } from 'types/disciplines';
+import axiosServices from 'utils/axios';
 
 interface ModalProps {
   dataDiscipline: DisciplinesProps;
@@ -10,12 +13,31 @@ interface ModalProps {
 
 export default function ModalEditDiscipline({ dataDiscipline, onClose, onSearch }: ModalProps) {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
   const [name, setName] = useState(dataDiscipline.nome_disciplina || '');
 
-  const handleSubmit = () => {
-    onClose();
-    onSearch(true);
+  const handleSubmit = async () => {
+    const newRegister = {
+      nome_disciplina: name
+    };
+    try {
+      await axiosServices
+        .post(`/disciplina/editar/${dataDiscipline.id_disciplina}`, newRegister, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Disciplina alterada com sucesso', true);
+          onClose();
+          onSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao alterar disciplina', false);
+    }
   };
 
   return (
