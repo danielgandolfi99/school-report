@@ -31,14 +31,19 @@ import ModalCreateStudent from 'components/Modals/RegisterStudents/ModalCreateSt
 import ModalEditStudent from 'components/Modals/RegisterStudents/ModalEditStudent';
 import useUser from 'hooks/useUser';
 import axiosServices from 'utils/axios';
+import ModalEditPasswordStudent from 'components/Modals/RegisterStudents/ModalEditPasswordStudent';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
+import LockResetIcon from '@mui/icons-material/LockReset';
 
 const RegisterStudents = () => {
   const theme = useTheme();
   const user = useUser();
   const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
   const [modalAdd, setModalAdd] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
+  const [modalEditPassword, setModalEditPassword] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [search, setSearch] = useState(true);
 
@@ -68,12 +73,25 @@ const RegisterStudents = () => {
           setSearch(false);
         });
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      showSnackbar('Erro ao buscar alunos', false);
     }
   };
 
-  const handleDeleteStudent = () => {
-    console.log('teste');
+  const handleDeleteStudent = async () => {
+    try {
+      await axiosServices
+        .delete(`/usuario/deletar/${dataStudent.id_usuario}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Aluno deletado com sucesso', true);
+          setSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao deletar aluno', false);
+    }
   };
 
   const handleCloseModalAdd = () => {
@@ -82,6 +100,10 @@ const RegisterStudents = () => {
 
   const handleCloseModalEdit = () => {
     setModalEdit(false);
+  };
+
+  const handleCloseModalEditPassword = () => {
+    setModalEditPassword(false);
   };
 
   const handleCloseModalDelete = () => {
@@ -109,10 +131,10 @@ const RegisterStudents = () => {
                 {<DeleteIcon sx={{ height: '20px', width: '20px' }} />}
               </IconButton>
             </Tooltip>
-            <Tooltip title="Editar" arrow>
+            <Tooltip title="Editar Dados" arrow>
               <IconButton
                 sx={{ height: '25px', width: '25px' }}
-                aria-label="Editar"
+                aria-label="Editar Dados"
                 color="default"
                 onClick={() => {
                   setDataStudent(row.original);
@@ -120,6 +142,19 @@ const RegisterStudents = () => {
                 }}
               >
                 <EditIcon sx={{ height: '20px', width: '20px' }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Alterar Senha" arrow>
+              <IconButton
+                sx={{ height: '25px', width: '25px' }}
+                aria-label="Alterar Senha"
+                color="default"
+                onClick={() => {
+                  setDataStudent(row.original);
+                  setModalEditPassword(true);
+                }}
+              >
+                <LockResetIcon sx={{ height: '20px', width: '20px' }} />
               </IconButton>
             </Tooltip>
           </Stack>
@@ -295,7 +330,7 @@ const RegisterStudents = () => {
         <Grid container xs={12} lg={8} md={11} alignItems="center" justifyContent="center">
           <Grid item xs={12}>
             <MainCard
-              title={<Typography variant="h5">Editar aluno</Typography>}
+              title={<Typography variant="h5">Editar dados do aluno {dataStudent.nome}</Typography>}
               secondary={
                 <IconButton color="error" onClick={handleCloseModalEdit} sx={{ border: '1px solid red' }}>
                   <CloseIcon />
@@ -304,6 +339,31 @@ const RegisterStudents = () => {
               content={false}
             >
               <ModalEditStudent onClose={handleCloseModalEdit} onSearch={setSearch} dataStudent={dataStudent} />
+            </MainCard>
+          </Grid>
+        </Grid>
+      </Modal>
+      <Modal
+        open={modalEditPassword}
+        onClose={handleCloseModalEditPassword}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Grid container xs={12} lg={8} md={11} alignItems="center" justifyContent="center">
+          <Grid item xs={12}>
+            <MainCard
+              title={<Typography variant="h5">Alterar senha para {dataStudent.nome}</Typography>}
+              secondary={
+                <IconButton color="error" onClick={handleCloseModalEditPassword} sx={{ border: '1px solid red' }}>
+                  <CloseIcon />
+                </IconButton>
+              }
+              content={false}
+            >
+              <ModalEditPasswordStudent onClose={handleCloseModalEdit} onSearch={setSearch} dataStudent={dataStudent} />
             </MainCard>
           </Grid>
         </Grid>

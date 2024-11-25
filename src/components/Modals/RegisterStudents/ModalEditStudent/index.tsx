@@ -1,7 +1,10 @@
 import { Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
 import MainCard from 'components/MainCard';
+import useUser from 'hooks/useUser';
 import { useState } from 'react';
 import { UserProps } from 'types/user';
+import axiosServices from 'utils/axios';
 
 interface ModalProps {
   dataStudent: UserProps;
@@ -11,15 +14,52 @@ interface ModalProps {
 
 export default function ModalEditStudent({ dataStudent, onClose, onSearch }: ModalProps) {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
   const [name, setName] = useState(dataStudent.nome || '');
   const [email, setEmail] = useState(dataStudent.email || '');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isEmailValid, setIsEmailValid] = useState(true);
 
-  const handleSubmit = () => {
-    onClose();
-    onSearch(true);
+  const handleSubmit = async () => {
+    const newRegister = {
+      nome: name,
+      email: email,
+      tipoUsuario: 'aluno'
+    };
+    try {
+      await axiosServices
+        .patch(`/usuario/editar/${dataStudent.id_usuario}`, newRegister, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Dados alterados com sucesso', true);
+          onClose();
+          onSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao alterar dados', false);
+    }
+  };
+
+  const checkDisabled = () => {
+    if (!name || !email || !isEmailValid) {
+      return true;
+    } else return false;
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    setIsEmailValid(validateEmail(value));
   };
 
   return (
@@ -48,43 +88,29 @@ export default function ModalEditStudent({ dataStudent, onClose, onSearch }: Mod
             </Grid>
             <Grid item xs={8}>
               <MainCard content={false}>
-                <TextField value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
+                <TextField
+                  type="email"
+                  value={email}
+                  onChange={handleEmailChange}
+                  fullWidth
+                  placeholder="Digite seu e-mail"
+                  error={!isEmailValid && email !== ''}
+                />
               </MainCard>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={6}>
-          <Grid container alignItems="center" justifyContent="start" spacing={1} direction="row">
-            <Grid item xs={4}>
-              <Typography whiteSpace="nowrap" fontWeight="bold" textAlign="end">
-                Senha:
+          {!isEmailValid && email !== '' && (
+            <Grid container justifyContent="center">
+              <Typography variant="caption" color="error" textAlign="end">
+                Insira um e-mail válido.
               </Typography>
             </Grid>
-            <Grid item xs={8}>
-              <MainCard content={false}>
-                <TextField value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
-              </MainCard>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={6}>
-          <Grid container alignItems="center" justifyContent="start" spacing={1} direction="row">
-            <Grid item xs={4}>
-              <Typography whiteSpace="nowrap" fontWeight="bold" textAlign="end">
-                Confirmar Senha:
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <MainCard content={false}>
-                <TextField value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} fullWidth />
-              </MainCard>
-            </Grid>
-          </Grid>
+          )}
         </Grid>
         <Grid item xs={12}>
           <Grid container alignItems="center" justifyContent="end" spacing={2} direction="row">
             <Grid item>
-              <Button variant="contained" fullWidth onClick={handleSubmit}>
+              <Button variant="contained" fullWidth onClick={handleSubmit} disabled={checkDisabled()}>
                 Salvar dados
               </Button>
             </Grid>
