@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import useUser from 'hooks/useUser';
+import axios from 'axios';
+// import useUser from 'hooks/useUser';
 
 const axiosServices = axios.create({ baseURL: 'http://localhost:8081/' });
 
