@@ -6,7 +6,6 @@ import { Box, Grid } from '@mui/material';
 // project import
 import AuthCard from './AuthCard';
 import AuthBackground from './AuthBackground';
-import AuthFooter from 'components/cards/AuthFooter';
 import Logo from 'components/logo';
 
 interface Props {
@@ -44,7 +43,7 @@ const AuthWrapper = ({ children }: Props) => (
         </Grid>
       </Grid>
       <Grid item xs={12} sx={{ m: 3, mt: 1 }}>
-        <AuthFooter />
+        <></>
       </Grid>
     </Grid>
   </Box>

@@ -6,8 +6,8 @@ import './globals.css';
 import ProviderWrapper from './ProviderWrapper';
 
 export const metadata: Metadata = {
-  title: 'Mantis Material UI React Dashboard Template',
-  description: 'Mantis Material UI React Dashboard Template'
+  title: 'Registros Escolares',
+  description: 'Registros Escolares'
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
