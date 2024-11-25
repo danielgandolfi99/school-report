@@ -17,7 +17,7 @@ import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 
 // types
 import { MenuOrientation } from 'types/config';
-import { useTheme } from '@mui/system';
+import { useTheme } from '@mui/material/styles';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 

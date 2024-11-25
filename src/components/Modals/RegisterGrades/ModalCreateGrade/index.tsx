@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { Autocomplete, Button, Grid, TextField, Typography } from '@mui/material';
 import { useSnackbar } from 'components/@extended/SnackbarContext';
 import MainCard from 'components/MainCard';
 import useUser from 'hooks/useUser';
@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { DisciplinesProps } from 'types/disciplines';
 import { UserProps } from 'types/user';
 import axiosServices from 'utils/axios';
+import { useTheme } from '@mui/material/styles';
 
 interface ModalProps {
   onClose: () => void;

@@ -1,4 +1,5 @@
-import { Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { Button, Grid, TextField, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useSnackbar } from 'components/@extended/SnackbarContext';
 import useUser from 'hooks/useUser';
 import { useState } from 'react';

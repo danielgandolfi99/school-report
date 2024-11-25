@@ -1,6 +1,6 @@
 import CardButton from 'components/CardButton';
 import { useRouter } from 'next/navigation';
-import { useTheme } from '@mui/system';
+import { useTheme } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
 import DescriptionIcon from '@mui/icons-material/Description';
 import HistoryIcon from '@mui/icons-material/History';
