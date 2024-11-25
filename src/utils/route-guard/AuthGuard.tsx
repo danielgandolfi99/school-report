@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 
 // next
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 
 // project-import
 import Loader from 'components/Loader';
@@ -15,25 +14,24 @@ import { GuardProps } from 'types/auth';
 // ==============================|| AUTH GUARD ||============================== //
 
 const AuthGuard = ({ children }: GuardProps) => {
-  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('/api/auth/protected');
-      const json = await res?.json();
-      if (!json?.protected) {
-        router.push('/login');
-      }
-    };
-    fetchData();
+    const session = localStorage.getItem('session');
 
-    // eslint-disable-next-line
-  }, [session]);
+    if (!session) {
+      router.push('/login');
+      return;
+    }
 
-  if (status === 'loading' || !session?.user) return <Loader />;
+    const parsedSession = JSON.parse(session);
 
-  return children;
+    if (!parsedSession?.token) {
+      router.push('/login');
+    }
+  }, [router]);
+
+  return <>{!localStorage.getItem('session') ? <Loader /> : children}</>;
 };
 
 export default AuthGuard;

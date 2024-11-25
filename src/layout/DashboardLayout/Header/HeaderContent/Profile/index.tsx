@@ -1,4 +1,4 @@
-import { useRef, useState, ReactNode, SyntheticEvent } from 'react';
+import { useRef, useState } from 'react';
 
 // next
 import { useRouter } from 'next/navigation';
@@ -6,11 +6,9 @@ import { useSession, signOut } from 'next-auth/react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Tooltip, Typography } from '@mui/material';
 
 // project import
-import ProfileTab from './ProfileTab';
-import SettingTab from './SettingTab';
 import Avatar from 'components/@extended/Avatar';
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
@@ -21,33 +19,7 @@ import useUser from 'hooks/useUser';
 import { ThemeMode } from 'types/config';
 
 // assets
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-
-// types
-interface TabPanelProps {
-  children?: ReactNode;
-  dir?: string;
-  index: number;
-  value: number;
-}
-
-// tab panel wrapper
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`profile-tabpanel-${index}`} aria-labelledby={`profile-tab-${index}`} {...other}>
-      {value === index && children}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `profile-tab-${index}`,
-    'aria-controls': `profile-tabpanel-${index}`
-  };
-}
+import { LogoutOutlined } from '@ant-design/icons';
 
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
@@ -56,6 +28,7 @@ const Profile = () => {
   const user = useUser();
   const router = useRouter();
   const { data: session } = useSession();
+
   const provider = session?.provider;
 
   const handleLogout = () => {
@@ -86,12 +59,6 @@ const Profile = () => {
     setOpen(false);
   };
 
-  const [value, setValue] = useState(0);
-
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
   const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'background.default' : 'grey.100';
 
   return (
@@ -115,9 +82,9 @@ const Profile = () => {
       >
         {user && (
           <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
-            <Avatar alt={user.name} src={user.avatar} size="sm" />
+            <Avatar alt={user.user.name} src={'/assets/images/users/avatar-1.png'} size="sm" />
             <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-              {user.name && user.name}
+              {user.user.name && user.user.name}
             </Typography>
           </Stack>
         )}
@@ -160,18 +127,13 @@ const Profile = () => {
                       <Grid item>
                         {user && (
                           <Stack direction="row" spacing={1.25} alignItems="center">
-                            <Avatar alt={user.name} src={user.avatar} />
-                            <Stack>
-                              <Typography variant="h6">{user.name}</Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                UI/UX Designer
-                              </Typography>
-                            </Stack>
+                            <Avatar src={'/assets/images/users/avatar-1.png'} />
+                            <Typography variant="h6">{user.user.name}</Typography>
                           </Stack>
                         )}
                       </Grid>
                       <Grid item>
-                        <Tooltip title="Logout">
+                        <Tooltip title="Sair">
                           <IconButton size="large" sx={{ color: 'text.primary' }} onClick={handleLogout}>
                             <LogoutOutlined />
                           </IconButton>
@@ -179,44 +141,6 @@ const Profile = () => {
                       </Grid>
                     </Grid>
                   </CardContent>
-                  {open && (
-                    <>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="profile tabs">
-                          <Tab
-                            sx={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              textTransform: 'capitalize'
-                            }}
-                            icon={<UserOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
-                            label="Profile"
-                            {...a11yProps(0)}
-                          />
-                          <Tab
-                            sx={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              textTransform: 'capitalize'
-                            }}
-                            icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
-                            label="Setting"
-                            {...a11yProps(1)}
-                          />
-                        </Tabs>
-                      </Box>
-                      <TabPanel value={value} index={0} dir={theme.direction}>
-                        <ProfileTab handleLogout={handleLogout} />
-                      </TabPanel>
-                      <TabPanel value={value} index={1} dir={theme.direction}>
-                        <SettingTab />
-                      </TabPanel>
-                    </>
-                  )}
                 </MainCard>
               </ClickAwayListener>
             </Paper>

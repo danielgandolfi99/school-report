@@ -1,41 +1,35 @@
-// next
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 interface UserProps {
+  user_id: number;
   name: string;
   email: string;
-  avatar: string;
-  thumb: string;
   role: string;
+  access_token: string;
+  avatar?: string;
+}
+
+interface SessionProps {
+  expires: number;
+  token: string;
+  provider: string;
+  user: UserProps;
 }
 
 const useUser = () => {
-  const { data: session } = useSession();
-  if (session) {
-    const user = session?.user;
-    const provider = session?.provider;
-    let thumb = user?.image!;
-    if (provider === 'cognito') {
-      const email = user?.email?.split('@');
-      user!.name = email ? email[0] : 'Jone Doe';
+  const [session, setSession] = useState<SessionProps | null>(null);
+
+  useEffect(() => {
+    const storedSession = localStorage.getItem('session');
+    if (storedSession) {
+      const parsedSession: SessionProps = JSON.parse(storedSession);
+      setSession(parsedSession);
+    } else {
+      console.error('Sessão não encontrada no localStorage');
     }
+  }, []);
 
-    if (!user?.image) {
-      user!.image = '/assets/images/users/avatar-1.png';
-      thumb = '/assets/images/users/avatar-thumb-1.png';
-    }
-
-    const newUser: UserProps = {
-      name: user!.name!,
-      email: user!.email!,
-      avatar: user?.image!,
-      thumb,
-      role: 'UI/UX Designer'
-    };
-
-    return newUser;
-  }
-  return false;
+  return session;
 };
 
 export default useUser;
