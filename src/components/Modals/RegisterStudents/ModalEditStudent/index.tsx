@@ -1,10 +1,10 @@
 import { Button, Grid, TextField, Typography, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import { useState } from 'react';
-import { User } from 'types/user';
+import { UserProps } from 'types/user';
 
 interface ModalProps {
-  dataStudent: User;
+  dataStudent: UserProps;
   onClose: () => void;
   onSearch: (search: boolean) => void;
 }

@@ -1,48 +1,37 @@
-import { Grid, Typography } from '@mui/material';
-// import CardButton from 'components/CardButton';
-import MainCard from 'components/MainCard';
-// import { useRouter } from 'next/navigation';
-// import { useTheme } from '@mui/system';
-// import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-// import { transportadoras } from 'constants/transportConfig';
-// import { useSession } from 'next-auth/react';
-// import { useEffect } from 'react';
+import CardButton from 'components/CardButton';
+import { useRouter } from 'next/navigation';
+import { useTheme } from '@mui/system';
+import PersonIcon from '@mui/icons-material/Person';
+import DescriptionIcon from '@mui/icons-material/Description';
+import HistoryIcon from '@mui/icons-material/History';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import { Grid } from '@mui/material';
 
 const Home = () => {
-  //   const { data: session } = useSession();
-  //   const router = useRouter();
-  //   const theme = useTheme();
-  //   const username = session?.user.username;
+  const router = useRouter();
+  const theme = useTheme();
 
-  //   useEffect(() => {
-  //     if (username) {
-  //       if (username === 'tiago' || username === 'rogerio' || username === 'edemilson') {
-  //         router.push('/transportadora/transfarroupilha');
-  //       } else if (username === 'mariotur') {
-  //         router.push('/transportadora/mariotur');
-  //       }
-  //     }
-  //   }, [router, username]);
+  const options = [
+    { title: 'Registro de Alunos', link: '/registro-alunos', icon: PersonIcon },
+    { title: 'Registro de Disciplinas', link: '/registro-disciplinas', icon: LibraryBooksIcon },
+    { title: 'Registro de Notas', link: '/registro-notas', icon: DescriptionIcon },
+    { title: 'Gerar Histórico Escolar', link: '/gerar-historico', icon: HistoryIcon }
+  ];
 
   return (
     <Grid>
-      <MainCard title={<Typography variant="h5">Transportadoras</Typography>}>
-        <Grid container rowSpacing={4} columnSpacing={4} alignItems="center">
-          {/* {transportadoras &&
-            transportadoras.map((item, index) => (
-              <Grid item xs={12} sm={6} md={6} lg={6} key={index}>
-                <CardButton
-                  primary={item.description}
-                  color={theme.palette.primary.main}
-                  iconPrimary={DirectionsBusIcon}
-                  onClickAction={() => {
-                    router.push(`/transportadora/${item.value}`);
-                  }}
-                />
-              </Grid>
-            ))} */}
-        </Grid>
-      </MainCard>
+      <Grid container rowSpacing={4} columnSpacing={4} alignItems="center" padding={2}>
+        {options.map((item, index) => (
+          <Grid item xs={12} sm={6} md={6} lg={6} key={index}>
+            <CardButton
+              primary={item.title}
+              color={theme.palette.primary.main}
+              iconPrimary={item.icon}
+              onClickAction={() => router.push(item.link)}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </Grid>
   );
 };

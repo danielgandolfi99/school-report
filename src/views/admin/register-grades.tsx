@@ -23,47 +23,24 @@ import MainCard from 'components/MainCard';
 import { useMemo, useState } from 'react';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { UserProps } from 'types/user';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
-import ModalCreateStudent from 'components/Modals/RegisterStudents/ModalCreateStudent';
-import ModalEditStudent from 'components/Modals/RegisterStudents/ModalEditStudent';
+import { GradesProps } from 'types/grades';
 
-const data: UserProps[] = [
+const data: GradesProps[] = [
   {
+    id_nota: 1,
+    nome_aluno: 'Daniel',
     id_usuario: 1,
-    nome: 'João Silva',
-    email: 'joao.silva@example.com',
-    tipo_usuario: 'admin'
+    id_disciplina: 1,
+    nome_disciplina: 'Engenharia de Software II',
+    nota: 10
   },
-  {
-    id_usuario: 2,
-    nome: 'Maria Oliveira',
-    email: 'maria.oliveira@example.com',
-    tipo_usuario: 'user'
-  },
-  {
-    id_usuario: 3,
-    nome: 'Carlos Souza',
-    email: 'carlos.souza@example.com',
-    tipo_usuario: 'moderator'
-  },
-  {
-    id_usuario: 4,
-    nome: 'Ana Santos',
-    email: 'ana.santos@example.com',
-    tipo_usuario: 'user'
-  },
-  {
-    id_usuario: 5,
-    nome: 'Roberto Lima',
-    email: 'roberto.lima@example.com',
-    tipo_usuario: 'admin'
-  }
+  { id_nota: 2, nome_aluno: 'Carlos', id_usuario: 2, id_disciplina: 2, nome_disciplina: 'Engenharia de Software II', nota: 8 }
 ];
 
-const RegisterStudents = () => {
+const RegisterGrades = () => {
   const theme = useTheme();
 
   const [modalAdd, setModalAdd] = useState(false);
@@ -71,9 +48,9 @@ const RegisterStudents = () => {
   const [modalDelete, setModalDelete] = useState(false);
   const [search, setSearch] = useState(false);
 
-  const [dataStudent, setDataStudent] = useState<UserProps>({} as UserProps);
+  const [dataGrade, setDataGrade] = useState<GradesProps>({} as GradesProps);
 
-  const handleDeleteStudent = () => {
+  const handleDeleteGrade = () => {
     console.log('teste');
   };
 
@@ -89,7 +66,7 @@ const RegisterStudents = () => {
     setModalDelete(false);
   };
 
-  const columns: ColumnDef<UserProps>[] = useMemo(
+  const columns: ColumnDef<GradesProps>[] = useMemo(
     () => [
       {
         header: '',
@@ -103,7 +80,7 @@ const RegisterStudents = () => {
                 aria-label="Excluir"
                 color="error"
                 onClick={() => {
-                  setDataStudent(row.original);
+                  setDataGrade(row.original);
                   setModalDelete(true);
                 }}
               >
@@ -116,7 +93,7 @@ const RegisterStudents = () => {
                 aria-label="Editar"
                 color="default"
                 onClick={() => {
-                  setDataStudent(row.original);
+                  setDataGrade(row.original);
                   setModalEdit(true);
                 }}
               >
@@ -136,8 +113,8 @@ const RegisterStudents = () => {
         )
       },
       {
-        accessorKey: 'nome',
-        header: 'Nome',
+        accessorKey: 'nome_aluno',
+        header: 'Nome do Aluno',
         cell: ({ getValue }) => (
           <Typography fontSize={13} textAlign="start">
             {getValue<string>()}
@@ -145,10 +122,19 @@ const RegisterStudents = () => {
         )
       },
       {
-        accessorKey: 'email',
-        header: 'Email',
+        accessorKey: 'nome_disciplina',
+        header: 'Nome da Disciplina',
         cell: ({ getValue }) => (
           <Typography fontSize={13} textAlign="start">
+            {getValue<string>()}
+          </Typography>
+        )
+      },
+      {
+        accessorKey: 'nota',
+        header: 'Nota',
+        cell: ({ getValue }) => (
+          <Typography fontSize={13} textAlign="center">
             {getValue<string>()}
           </Typography>
         )
@@ -177,12 +163,12 @@ const RegisterStudents = () => {
   return (
     <Grid>
       <MainCard
-        title={<Typography variant="h5">Registro de Alunos</Typography>}
+        title={<Typography variant="h5">Registro de Notas</Typography>}
         secondary={
           <Grid container spacing={1}>
             <Grid item>
               <Button variant="contained" endIcon={<AddBoxIcon sx={{ height: 20, width: 20 }} />} onClick={() => setModalAdd(true)}>
-                Adicionar novo Aluno
+                Adicionar nova nota
               </Button>
             </Grid>
           </Grid>
@@ -271,7 +257,7 @@ const RegisterStudents = () => {
         <Grid container xs={12} lg={8} md={11} alignItems="center" justifyContent="center">
           <Grid item xs={12}>
             <MainCard
-              title={<Typography variant="h5">Adicionar novo aluno</Typography>}
+              title={<Typography variant="h5">Adicionar nova nota</Typography>}
               secondary={
                 <IconButton color="error" onClick={handleCloseModalAdd} sx={{ border: '1px solid red' }}>
                   <CloseIcon />
@@ -279,7 +265,7 @@ const RegisterStudents = () => {
               }
               content={false}
             >
-              <ModalCreateStudent onClose={handleCloseModalAdd} onSearch={setSearch} />
+              {/* <ModalCreateGrade onClose={handleCloseModalAdd} onSearch={setSearch} /> */}
             </MainCard>
           </Grid>
         </Grid>
@@ -296,7 +282,7 @@ const RegisterStudents = () => {
         <Grid container xs={12} lg={8} md={11} alignItems="center" justifyContent="center">
           <Grid item xs={12}>
             <MainCard
-              title={<Typography variant="h5">Editar aluno</Typography>}
+              title={<Typography variant="h5">Editar nota</Typography>}
               secondary={
                 <IconButton color="error" onClick={handleCloseModalEdit} sx={{ border: '1px solid red' }}>
                   <CloseIcon />
@@ -304,21 +290,21 @@ const RegisterStudents = () => {
               }
               content={false}
             >
-              <ModalEditStudent onClose={handleCloseModalEdit} onSearch={setSearch} dataStudent={dataStudent} />
+              {/* <ModalEditGrade onClose={handleCloseModalEdit} onSearch={setSearch} dataGrade={dataGrade} /> */}
             </MainCard>
           </Grid>
         </Grid>
       </Modal>
       <Dialog open={modalDelete} onClose={handleCloseModalDelete}>
-        <DialogTitle>Excluir aluno {dataStudent.nome}</DialogTitle>
+        <DialogTitle>Excluir nota de {dataGrade.nome_aluno}</DialogTitle>
         <DialogContent>
-          <DialogContentText>Você tem certeza que deseja excluir este aluno?</DialogContentText>
+          <DialogContentText>Você tem certeza que deseja a nota deste aluno?</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModalDelete} color="error" variant="outlined">
             Cancelar
           </Button>
-          <Button variant="contained" onClick={handleDeleteStudent}>
+          <Button variant="contained" onClick={handleDeleteGrade}>
             Excluir
           </Button>
         </DialogActions>
@@ -327,4 +313,4 @@ const RegisterStudents = () => {
   );
 };
 
-export default RegisterStudents;
+export default RegisterGrades;
