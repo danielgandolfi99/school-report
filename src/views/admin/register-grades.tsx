@@ -30,11 +30,14 @@ import { GradesProps } from 'types/grades';
 import useUser from 'hooks/useUser';
 import axiosServices from 'utils/axios';
 import ModalEditGrade from 'components/Modals/RegisterGrades/ModalEditGrade';
+import ModalCreateGrade from 'components/Modals/RegisterGrades/ModalCreateGrade';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
 
 const RegisterGrades = () => {
   const theme = useTheme();
   const user = useUser();
   const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
   const [modalAdd, setModalAdd] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
@@ -67,12 +70,25 @@ const RegisterGrades = () => {
           setSearch(false);
         });
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      showSnackbar('Erro ao buscar notas', false);
     }
   };
 
-  const handleDeleteGrade = () => {
-    console.log('teste');
+  const handleDeleteGrade = async () => {
+    try {
+      await axiosServices
+        .delete(`/nota/deletar/${dataGrade.id_nota}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Nota deletada com sucesso', true);
+          setSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao deletar nota', false);
+    }
   };
 
   const handleCloseModalAdd = () => {
@@ -286,7 +302,7 @@ const RegisterGrades = () => {
               }
               content={false}
             >
-              {/* <ModalCreateGrade onClose={handleCloseModalAdd} onSearch={setSearch} /> */}
+              <ModalCreateGrade onClose={handleCloseModalAdd} onSearch={setSearch} />
             </MainCard>
           </Grid>
         </Grid>

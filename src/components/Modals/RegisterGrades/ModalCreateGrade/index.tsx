@@ -1,6 +1,12 @@
-import { Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { Autocomplete, Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
 import MainCard from 'components/MainCard';
+import useUser from 'hooks/useUser';
 import { useState } from 'react';
+import useSWR from 'swr';
+import { DisciplinesProps } from 'types/disciplines';
+import { UserProps } from 'types/user';
+import axiosServices from 'utils/axios';
 
 interface ModalProps {
   onClose: () => void;
@@ -9,79 +15,162 @@ interface ModalProps {
 
 export default function ModalCreateGrade({ onClose, onSearch }: ModalProps) {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [dataUser, setDataUser] = useState<UserProps>({} as UserProps);
+  const [dataDiscipline, setDataDiscipline] = useState<DisciplinesProps>({} as DisciplinesProps);
+  const [disciplinasFiltradas, setDisciplinasFiltradas] = useState<DisciplinesProps[]>([]);
+  const [grade, setGrade] = useState('');
 
-  const handleSubmit = () => {
-    onClose();
-    onSearch(true);
+  async function getData<T>(key: string): Promise<T> {
+    const response = await axiosServices.get(key, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  }
+
+  const { data: alunos } = useSWR('/usuario/alunos', getData<UserProps[]>, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  });
+
+  const { data: disciplinas } = useSWR('/disciplina/consultar ', getData<DisciplinesProps[]>, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  });
+
+  const handleSubmit = async () => {
+    const newRegister = {
+      idUsuario: dataUser.id_usuario || 0,
+      idDisciplina: dataDiscipline.id_disciplina || 0,
+      nota: grade
+    };
+    try {
+      await axiosServices
+        .post('/nota/cadastrar', newRegister, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Nota cadastrada com sucesso', true);
+          onClose();
+          onSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao cadastrar nota', false);
+    }
   };
 
   const handleReset = () => {
-    setName('');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
+    setDataUser({} as UserProps);
+    setDataDiscipline({} as DisciplinesProps);
+    setGrade('');
+  };
+
+  const handleUserChange = (value: UserProps) => {
+    if (value) {
+      setDataUser(value);
+      const filtered = disciplinas && disciplinas.filter((disciplina) => disciplina.id_usuario === value.id_usuario);
+      setDisciplinasFiltradas(filtered || []);
+    } else {
+      setDisciplinasFiltradas([]);
+    }
+  };
+
+  const checkDisabled = () => {
+    if (!dataUser || !dataDiscipline || !disciplinasFiltradas || !grade) {
+      return true;
+    } else return false;
   };
 
   return (
     <Grid container sx={{ backgroundColor: theme.palette.grey[200] }}>
       <Grid item container spacing={2} padding={2}>
-        <Grid item xs={6}>
+        <Grid item xs={4.5}>
           <Grid container alignItems="center" justifyContent="start" spacing={1} direction="row">
             <Grid item xs={4}>
               <Typography whiteSpace="nowrap" fontWeight="bold" textAlign="end">
-                Nome Completo:
+                Aluno:
               </Typography>
             </Grid>
             <Grid item xs={8}>
               <MainCard content={false}>
-                <TextField value={name} onChange={(e) => setName(e.target.value)} fullWidth />
+                <Autocomplete
+                  id="user-autocomplete"
+                  value={dataUser}
+                  onChange={(event, value) => {
+                    if (value) {
+                      handleUserChange(value);
+                    } else {
+                      setDataUser({} as UserProps);
+                    }
+                  }}
+                  options={alunos || []}
+                  getOptionLabel={(option) => option.nome || ''}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                />
               </MainCard>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4.5}>
           <Grid container alignItems="center" justifyContent="start" spacing={1} direction="row">
             <Grid item xs={4}>
               <Typography whiteSpace="nowrap" fontWeight="bold" textAlign="end">
-                Email:
+                Disciplina:
               </Typography>
             </Grid>
             <Grid item xs={8}>
               <MainCard content={false}>
-                <TextField value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
+                <Autocomplete
+                  id="discipline-autocomplete"
+                  value={dataDiscipline}
+                  onChange={(event, value) => {
+                    if (value) {
+                      setDataDiscipline(value);
+                    } else {
+                      setDataDiscipline({} as DisciplinesProps);
+                    }
+                  }}
+                  disabled={!dataUser}
+                  options={disciplinasFiltradas || []}
+                  getOptionLabel={(option) => option.nome_disciplina || ''}
+                  renderInput={(params) => <TextField {...params} fullWidth disabled={!dataUser} />}
+                />
               </MainCard>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={3}>
           <Grid container alignItems="center" justifyContent="start" spacing={1} direction="row">
             <Grid item xs={4}>
               <Typography whiteSpace="nowrap" fontWeight="bold" textAlign="end">
-                Senha:
+                Nota:
               </Typography>
             </Grid>
             <Grid item xs={8}>
               <MainCard content={false}>
-                <TextField value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
-              </MainCard>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={6}>
-          <Grid container alignItems="center" justifyContent="start" spacing={1} direction="row">
-            <Grid item xs={4}>
-              <Typography whiteSpace="nowrap" fontWeight="bold" textAlign="end">
-                Confirmar Senha:
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <MainCard content={false}>
-                <TextField value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} fullWidth />
+                <TextField
+                  value={grade}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                      const numValue = parseFloat(value);
+
+                      if (value === '' || (numValue >= 0 && numValue <= 10)) {
+                        setGrade(value);
+                      }
+                    }
+                  }}
+                  autoFocus
+                  fullWidth
+                />
               </MainCard>
             </Grid>
           </Grid>
@@ -94,8 +183,8 @@ export default function ModalCreateGrade({ onClose, onSearch }: ModalProps) {
               </Button>
             </Grid>
             <Grid item>
-              <Button variant="contained" fullWidth onClick={handleSubmit}>
-                Salvar novo aluno
+              <Button variant="contained" fullWidth onClick={handleSubmit} disabled={checkDisabled()}>
+                Salvar nova nota
               </Button>
             </Grid>
           </Grid>

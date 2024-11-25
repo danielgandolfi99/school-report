@@ -1,7 +1,10 @@
 import { Button, Grid, TextField, Typography, useTheme } from '@mui/material';
+import { useSnackbar } from 'components/@extended/SnackbarContext';
 import MainCard from 'components/MainCard';
+import useUser from 'hooks/useUser';
 import { useState } from 'react';
 import { GradesProps } from 'types/grades';
+import axiosServices from 'utils/axios';
 
 interface ModalProps {
   dataGrade: GradesProps;
@@ -11,12 +14,31 @@ interface ModalProps {
 
 export default function ModalEditGrade({ dataGrade, onClose, onSearch }: ModalProps) {
   const theme = useTheme();
+  const user = useUser();
+  const token = user?.token;
+  const { showSnackbar } = useSnackbar();
 
   const [grade, setGrade] = useState(dataGrade.nota || '');
 
-  const handleSubmit = () => {
-    onClose();
-    onSearch(true);
+  const handleSubmit = async () => {
+    const newRegister = {
+      nota: grade
+    };
+    try {
+      await axiosServices
+        .post(`/nota/editar/${dataGrade.id_nota}`, newRegister, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .finally(() => {
+          showSnackbar('Nota editada com sucesso', true);
+          onClose();
+          onSearch(true);
+        });
+    } catch (error) {
+      showSnackbar('Erro ao editar nota', false);
+    }
   };
 
   return (
