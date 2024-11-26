@@ -187,7 +187,7 @@ const RegisterDisciplines = () => {
         {search ? (
           <Skeleton height={300} />
         ) : data && data.length > 0 ? (
-          <Grid xs={12} maxHeight={'calc(100vh - 480px)'} overflow="auto">
+          <Grid xs={12}>
             <Table sx={{ padding: '0px important' }}>
               <TableHead
                 sx={{
