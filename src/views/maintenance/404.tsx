@@ -45,12 +45,12 @@ function Error404() {
       </Grid>
       <Grid item xs={12}>
         <Stack spacing={2} justifyContent="center" alignItems="center">
-          <Typography variant="h1">Page Not Found</Typography>
+          <Typography variant="h1">Página não encontrada</Typography>
           <Typography color="textSecondary" align="center" sx={{ width: { xs: '73%', sm: '61%' } }}>
-            The page you are looking was moved, removed, renamed, or might never exist!
+            A página não foi encontrada ou não existe.
           </Typography>
           <NextLink href={APP_DEFAULT_PATH} passHref legacyBehavior>
-            <Button variant="contained">Back To Home</Button>
+            <Button variant="contained">Voltar para o início</Button>
           </NextLink>
         </Stack>
       </Grid>

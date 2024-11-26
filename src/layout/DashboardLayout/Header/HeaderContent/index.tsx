@@ -6,16 +6,16 @@ import { Box, useMediaQuery } from '@mui/material';
 import Profile from './Profile';
 import MobileSection from './MobileSection';
 
-import useConfig from 'hooks/useConfig';
-import DrawerHeader from 'layout/DashboardLayout/Drawer/DrawerHeader';
+// import useConfig from 'hooks/useConfig';
+// import DrawerHeader from 'layout/DashboardLayout/Drawer/DrawerHeader';
 
 // type
-import { MenuOrientation } from 'types/config';
+// import { MenuOrientation } from 'types/config';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 
 const HeaderContent = () => {
-  const { menuOrientation } = useConfig();
+  // const { menuOrientation } = useConfig();
 
   const downLG = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'));
 
@@ -23,7 +23,7 @@ const HeaderContent = () => {
 
   return (
     <>
-      {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />}
+      {/* {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />} */}
       {!downLG && <Box sx={{ width: '100%', ml: { xs: 0, md: 1 } }} />}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
 
