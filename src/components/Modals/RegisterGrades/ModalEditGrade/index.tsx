@@ -27,7 +27,7 @@ export default function ModalEditGrade({ dataGrade, onClose, onSearch }: ModalPr
     };
     try {
       await axiosServices
-        .post(`/nota/editar/${dataGrade.id_nota}`, newRegister, {
+        .put(`/nota/${dataGrade.id_nota}`, newRegister, {
           headers: {
             Authorization: `Bearer ${token}`
           }

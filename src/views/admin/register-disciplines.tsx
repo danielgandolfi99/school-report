@@ -77,13 +77,14 @@ const RegisterDisciplines = () => {
   const handleDeleteDiscipline = async () => {
     try {
       await axiosServices
-        .delete(`/discipline/deletar/${dataDiscipline.id_disciplina}`, {
+        .delete(`/disciplina/${dataDiscipline.id_disciplina}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
         .finally(() => {
           showSnackbar('Disciplina deletada com sucesso', true);
+          handleCloseModalDelete();
           setSearch(true);
         });
     } catch (error) {

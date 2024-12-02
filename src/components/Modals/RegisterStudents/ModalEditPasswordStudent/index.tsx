@@ -52,7 +52,7 @@ export default function ModalEditPasswordStudent({ dataStudent, onClose, onSearc
     };
     try {
       await axiosServices
-        .post(`/usuario/editar-senha/${dataStudent.id_usuario}`, newRegister, {
+        .put(`/usuario/${dataStudent.id_usuario}`, newRegister, {
           headers: {
             Authorization: `Bearer ${token}`
           }

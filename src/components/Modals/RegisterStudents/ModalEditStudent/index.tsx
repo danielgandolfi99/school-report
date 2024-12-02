@@ -26,12 +26,11 @@ export default function ModalEditStudent({ dataStudent, onClose, onSearch }: Mod
   const handleSubmit = async () => {
     const newRegister = {
       nome: name,
-      email: email,
-      tipoUsuario: 'aluno'
+      email: email
     };
     try {
       await axiosServices
-        .patch(`/usuario/editar/${dataStudent.id_usuario}`, newRegister, {
+        .put(`/usuario/${dataStudent.id_usuario}`, newRegister, {
           headers: {
             Authorization: `Bearer ${token}`
           }

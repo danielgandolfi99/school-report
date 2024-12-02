@@ -52,7 +52,7 @@ const RegisterHistory = () => {
         size: 40
       },
       {
-        accessorKey: 'aluno_nome',
+        accessorKey: 'nome_aluno',
         header: 'Aluno',
         cell: ({ getValue }) => (
           <Typography fontSize={13} textAlign="center">
@@ -133,7 +133,7 @@ const RegisterHistory = () => {
           <body>
             <div >
               <h1 class="print-header">Histórico Escolar</h1>
-              <p>Aluno: ${dataStudent.aluno_nome}</p>
+              <p>Aluno: ${dataStudent.nome_aluno}</p>
               <p>Matrícula: A000${dataStudent.id_usuario}</p>
             </div>
             ${printContents}

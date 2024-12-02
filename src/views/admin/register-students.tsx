@@ -80,7 +80,7 @@ const RegisterStudents = () => {
   const handleDeleteStudent = async () => {
     try {
       await axiosServices
-        .delete(`/usuario/deletar/${dataStudent.id_usuario}`, {
+        .delete(`/usuario/${dataStudent.id_usuario}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -88,6 +88,7 @@ const RegisterStudents = () => {
         .finally(() => {
           showSnackbar('Aluno deletado com sucesso', true);
           setSearch(true);
+          handleCloseModalDelete();
         });
     } catch (error) {
       showSnackbar('Erro ao deletar aluno', false);
@@ -363,7 +364,7 @@ const RegisterStudents = () => {
               }
               content={false}
             >
-              <ModalEditPasswordStudent onClose={handleCloseModalEdit} onSearch={setSearch} dataStudent={dataStudent} />
+              <ModalEditPasswordStudent onClose={handleCloseModalEditPassword} onSearch={setSearch} dataStudent={dataStudent} />
             </MainCard>
           </Grid>
         </Grid>

@@ -26,7 +26,7 @@ const generateTranscript: NavItemType = {
       type: 'item',
       icon: icons.HistoryIcon,
       breadcrumbs: false,
-      url: '/gerar-historico'
+      url: '/registro-historico'
     }
   ]
 };

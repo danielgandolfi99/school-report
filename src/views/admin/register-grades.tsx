@@ -77,13 +77,14 @@ const RegisterGrades = () => {
   const handleDeleteGrade = async () => {
     try {
       await axiosServices
-        .delete(`/nota/deletar/${dataGrade.id_nota}`, {
+        .delete(`/nota/${dataGrade.id_nota}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
         .finally(() => {
           showSnackbar('Nota deletada com sucesso', true);
+          handleCloseModalDelete();
           setSearch(true);
         });
     } catch (error) {

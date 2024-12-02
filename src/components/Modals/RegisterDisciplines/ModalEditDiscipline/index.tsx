@@ -22,11 +22,11 @@ export default function ModalEditDiscipline({ dataDiscipline, onClose, onSearch 
 
   const handleSubmit = async () => {
     const newRegister = {
-      nome_disciplina: name
+      nomeDisciplina: name
     };
     try {
       await axiosServices
-        .post(`/disciplina/editar/${dataDiscipline.id_disciplina}`, newRegister, {
+        .put(`/disciplina/${dataDiscipline.id_disciplina}`, newRegister, {
           headers: {
             Authorization: `Bearer ${token}`
           }

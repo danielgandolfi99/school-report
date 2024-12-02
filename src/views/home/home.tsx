@@ -15,7 +15,7 @@ const Home = () => {
     { title: 'Registro de Alunos', link: '/registro-alunos', icon: PersonIcon },
     { title: 'Registro de Disciplinas', link: '/registro-disciplinas', icon: LibraryBooksIcon },
     { title: 'Registro de Notas', link: '/registro-notas', icon: DescriptionIcon },
-    { title: 'Gerar Histórico Escolar', link: '/gerar-historico', icon: HistoryIcon }
+    { title: 'Gerar Histórico Escolar', link: '/registro-historico', icon: HistoryIcon }
   ];
 
   return (
