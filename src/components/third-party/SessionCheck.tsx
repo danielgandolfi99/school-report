@@ -1,20 +1,27 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
+import useUser from 'hooks/useUser';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 const SessionCheck = () => {
-  const { data: session } = useSession();
+  const router = useRouter();
+  const user = useUser();
+  const expires = user?.expires;
 
   useEffect(() => {
-    if (session) {
-      const { expires } = session;
-
-      if (new Date(expires) < new Date()) {
-        signOut({ callbackUrl: '/login' });
+    const timeoutId = setTimeout(() => {
+      if (expires) {
+        if (new Date(expires) < new Date()) {
+          router.push('/login');
+        }
+      } else {
+        router.push('/login');
       }
-    }
-  }, [session]);
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [expires, router]);
 
   return null;
 };

@@ -15,7 +15,7 @@ import Notistack from 'components/third-party/Notistack';
 
 import { ConfigProvider } from 'contexts/ConfigContext';
 import { SnackbarProvider } from 'components/@extended/SnackbarContext';
-// import SessionCheck from 'components/third-party/SessionCheck';
+import SessionCheck from 'components/third-party/SessionCheck';
 
 // ==============================|| APP - THEME, ROUTER, LOCAL ||============================== //
 
@@ -27,7 +27,7 @@ export default function ProviderWrapper({ children }: { children: ReactNode }) {
           <Locales>
             <ScrollTop>
               <SessionProvider refetchInterval={0}>
-                {/* <SessionCheck /> */}
+                <SessionCheck />
                 <Notistack>
                   <SnackbarProvider>{children}</SnackbarProvider>
                 </Notistack>

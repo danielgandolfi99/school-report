@@ -6,18 +6,7 @@ import React, { useState, FocusEvent, SyntheticEvent } from 'react';
 import axiosServices from 'utils/axios';
 
 // material-ui
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormHelperText,
-  Grid,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Button, FormHelperText, Grid, InputAdornment, InputLabel, OutlinedInput, Stack, Typography } from '@mui/material';
 
 // third party
 import * as Yup from 'yup';
@@ -33,7 +22,6 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 // ============================|| API LOGIN ||============================ //
 
 const AuthLogin = () => {
-  const [checked, setChecked] = useState(false);
   const [capsWarning, setCapsWarning] = useState(false);
   const [showSenha, setShowSenha] = useState(false);
 
@@ -177,7 +165,7 @@ const AuthLogin = () => {
                 </FormHelperText>
               )}
             </Grid>
-            <Grid item xs={12} sx={{ mt: -1 }}>
+            {/* <Grid item xs={12} sx={{ mt: -1 }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -190,7 +178,7 @@ const AuthLogin = () => {
                 }
                 label={<Typography variant="h6">Salvar login</Typography>}
               />
-            </Grid>
+            </Grid> */}
             {errors.submit && (
               <Grid item xs={12}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
