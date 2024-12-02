@@ -22,7 +22,6 @@ export default function ModalCreateGrade({ onClose, onSearch }: ModalProps) {
 
   const [dataUser, setDataUser] = useState<UserProps>({} as UserProps);
   const [dataDiscipline, setDataDiscipline] = useState<DisciplinesProps>({} as DisciplinesProps);
-  const [disciplinasFiltradas, setDisciplinasFiltradas] = useState<DisciplinesProps[]>([]);
   const [grade, setGrade] = useState('');
 
   async function getData<T>(key: string): Promise<T> {
@@ -35,12 +34,12 @@ export default function ModalCreateGrade({ onClose, onSearch }: ModalProps) {
     return response.data;
   }
 
-  const { data: alunos } = useSWR('/usuario/alunos', getData<UserProps[]>, {
+  const { data: alunos } = useSWR(token ? '/usuario/alunos' : null, getData<UserProps[]>, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
 
-  const { data: disciplinas } = useSWR('/disciplina/consultar ', getData<DisciplinesProps[]>, {
+  const { data: disciplinas } = useSWR(token ? '/disciplina/consultar' : null, getData<DisciplinesProps[]>, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
@@ -77,15 +76,11 @@ export default function ModalCreateGrade({ onClose, onSearch }: ModalProps) {
   const handleUserChange = (value: UserProps) => {
     if (value) {
       setDataUser(value);
-      const filtered = disciplinas && disciplinas.filter((disciplina) => disciplina.id_usuario === value.id_usuario);
-      setDisciplinasFiltradas(filtered || []);
-    } else {
-      setDisciplinasFiltradas([]);
     }
   };
 
   const checkDisabled = () => {
-    if (!dataUser || !dataDiscipline || !disciplinasFiltradas || !grade) {
+    if (!dataUser || !dataDiscipline || !grade) {
       return true;
     } else return false;
   };
@@ -139,10 +134,10 @@ export default function ModalCreateGrade({ onClose, onSearch }: ModalProps) {
                       setDataDiscipline({} as DisciplinesProps);
                     }
                   }}
-                  disabled={!dataUser}
-                  options={disciplinasFiltradas || []}
+                  disabled={dataUser && !dataUser.nome}
+                  options={disciplinas || []}
                   getOptionLabel={(option) => option.nome_disciplina || ''}
-                  renderInput={(params) => <TextField {...params} fullWidth disabled={!dataUser} />}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
                 />
               </MainCard>
             </Grid>
