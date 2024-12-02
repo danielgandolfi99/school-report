@@ -35,6 +35,7 @@
     "react-dom": "^18.2.0",
     "react-intl": "^6.4.4",
     "react-timer-hook": "^3.0.7",
+    "react-to-print": "^2.14.12",
     "react-window": "^1.8.9",
     "react18-input-otp": "^1.1.4",
     "simplebar-react": "^3.2.4",
