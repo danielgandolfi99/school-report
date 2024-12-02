@@ -1,31 +1,32 @@
-import { useRef, useState } from 'react';
+// import { useRef, useState } from 'react';
 
 // next
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
-import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Tooltip, Typography } from '@mui/material';
+// import { useTheme } from '@mui/material/styles';
+import { Box, Button } from '@mui/material';
 
 // project import
-import Avatar from 'components/@extended/Avatar';
-import MainCard from 'components/MainCard';
-import Transitions from 'components/@extended/Transitions';
-import IconButton from 'components/@extended/IconButton';
-import useUser from 'hooks/useUser';
+// import Avatar from 'components/@extended/Avatar';
+// import MainCard from 'components/MainCard';
+// import Transitions from 'components/@extended/Transitions';
+// import IconButton from 'components/@extended/IconButton';
+// import useUser from 'hooks/useUser';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 // types
-import { ThemeMode } from 'types/config';
+// import { ThemeMode } from 'types/config';
 
 // assets
-import { LogoutOutlined } from '@ant-design/icons';
+// import { LogoutOutlined } from '@ant-design/icons';
 
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 const Profile = () => {
-  const theme = useTheme();
-  const user = useUser();
+  // const theme = useTheme();
+  // const user = useUser();
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -46,24 +47,27 @@ const Profile = () => {
     router.push('/login');
   };
 
-  const anchorRef = useRef<any>(null);
-  const [open, setOpen] = useState(false);
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
+  // const anchorRef = useRef<any>(null);
+  // const [open, setOpen] = useState(false);
+  // const handleToggle = () => {
+  //   setOpen((prevOpen) => !prevOpen);
+  // };
 
-  const handleClose = (event: MouseEvent | TouchEvent) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-    setOpen(false);
-  };
+  // const handleClose = (event: MouseEvent | TouchEvent) => {
+  //   if (anchorRef.current && anchorRef.current.contains(event.target)) {
+  //     return;
+  //   }
+  //   setOpen(false);
+  // };
 
-  const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'background.default' : 'grey.100';
+  // const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'background.default' : 'grey.100';
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
-      <ButtonBase
+      <Button variant="contained" endIcon={<LogoutIcon sx={{ height: 16, width: 16 }} />} onClick={handleLogout}>
+        Sair da Conta
+      </Button>
+      {/* <ButtonBase
         sx={{
           p: 0.25,
           bgcolor: open ? iconBackColorOpen : 'transparent',
@@ -146,7 +150,7 @@ const Profile = () => {
             </Paper>
           </Transitions>
         )}
-      </Popper>
+      </Popper> */}
     </Box>
   );
 };

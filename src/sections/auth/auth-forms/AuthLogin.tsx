@@ -70,7 +70,7 @@ const AuthLogin = () => {
 
             const session = {
               id: userResponse.data.user_id,
-              expires: Date.now() + 3600 * 1000,
+              expires: Date.now() + 3600 * 1000 * 24,
               token: response.data.access_token,
               provider: 'credentials',
               user: {

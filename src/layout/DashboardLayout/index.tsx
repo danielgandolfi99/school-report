@@ -6,9 +6,9 @@ import { useEffect, ReactNode } from 'react';
 import { Box, Toolbar, useMediaQuery } from '@mui/material';
 
 // project import
-import Drawer from './Drawer';
+// import Drawer from './Drawer';
 import Header from './Header';
-import HorizontalBar from './Drawer/HorizontalBar';
+// import HorizontalBar from './Drawer/HorizontalBar';
 import Loader from 'components/Loader';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
@@ -48,7 +48,7 @@ const DashboardLayout = ({ children }: Props) => {
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header />
-      {!isHorizontal ? <Drawer /> : <HorizontalBar />}
+      {/* {!isHorizontal ? <Drawer /> : <HorizontalBar />} */}
       <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 1, sm: 1 } }}>
         <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
         <Breadcrumbs />
