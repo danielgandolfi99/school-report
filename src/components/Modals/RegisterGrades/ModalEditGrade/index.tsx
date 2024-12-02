@@ -101,7 +101,7 @@ export default function ModalEditGrade({ dataGrade, onClose, onSearch }: ModalPr
             <Grid item xs={8}>
               <MainCard content={false}>
                 <TextField
-                  value={'A000' + dataGrade.id_usuario}
+                  value={'A000' + dataGrade.id_usuario.toString().padStart(4, '0')}
                   fullWidth
                   disabled
                   sx={{

@@ -93,7 +93,7 @@ const HomeStudents = () => {
       <div>
         <h1 style="text-align: center; margin-bottom: 20px;">Histórico Escolar</h1>
         <p>Aluno: ${user?.user.name}</p>
-        <p>Matrícula: A000${user?.user.user_id}</p>
+        <p>Matrícula: ${'A000' + user?.user.user_id.toString().padStart(4, '0')}</p>
         <p>Email: ${user?.user.email}</p>
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
           <thead>

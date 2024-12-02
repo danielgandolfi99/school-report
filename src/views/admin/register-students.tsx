@@ -166,7 +166,7 @@ const RegisterStudents = () => {
         header: 'Matrícula',
         cell: ({ getValue }) => (
           <Typography fontSize={13} textAlign="center">
-            {'A000' + getValue<number>()}
+            {'A000' + getValue<number>().toString().padStart(4, '0')}
           </Typography>
         )
       },

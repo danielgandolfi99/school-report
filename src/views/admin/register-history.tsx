@@ -123,7 +123,7 @@ const RegisterHistory = () => {
       <div>
         <h1 style="text-align: center; margin-bottom: 20px;">Histórico Escolar</h1>
         <p>Aluno: ${dataStudent?.nome_aluno}</p>
-        <p>Matrícula: A000${dataStudent?.id_usuario}</p>
+        <p>Matrícula: ${'A000' + dataStudent?.id_usuario?.toString().padStart(4, '0')}</p>
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
           <thead>
             <tr>
