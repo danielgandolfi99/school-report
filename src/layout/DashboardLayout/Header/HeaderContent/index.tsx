@@ -1,8 +1,6 @@
 // material-ui
 import { Stack, Typography } from '@mui/material';
 
-// project import
-// import Profile from './Profile';
 import useUser from 'hooks/useUser';
 import { Button } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
@@ -10,16 +8,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { signOut, useSession } from 'next-auth/react';
 
-// import useConfig from 'hooks/useConfig';
-// import DrawerHeader from 'layout/DashboardLayout/Drawer/DrawerHeader';
-
-// type
-// import { MenuOrientation } from 'types/config';
-
 // ==============================|| HEADER - CONTENT ||============================== //
 
 const HeaderContent = () => {
-  // const { menuOrientation } = useConfig();
   const router = useRouter();
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -48,7 +39,6 @@ const HeaderContent = () => {
 
   return (
     <>
-      {/* {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />} */}
       <Stack direction="row" spacing={4} alignItems="center" justifyContent="space-between" width="100%">
         {pathname !== '/' && (
           <Button
@@ -67,11 +57,6 @@ const HeaderContent = () => {
           Sair da Conta
         </Button>
       </Stack>
-      {/* {!downLG && <Box sx={{ width: '100%', ml: { xs: 0, md: 1 } }} />} */}
-      {/* {downLG && <Box sx={{ width: '100%', ml: 1 }} />} */}
-
-      {/* {<Profile />} */}
-      {/* {downLG && <MobileSection />} */}
     </>
   );
 };
